@@ -6,7 +6,7 @@ Descripción:
 Clase encargada de registrar los eventos, advertencias
 y errores del sistema en el archivo errores.log.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
