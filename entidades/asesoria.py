@@ -7,55 +7,42 @@ Clase que representa el servicio de asesoría.
 
 Hereda de la clase abstracta Servicio.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
 from entidades.servicio import Servicio
+
 from excepciones.excepciones import ServicioInvalidoError
 from utilidades.logger import Logger
 
 
 class Asesoria(Servicio):
     """
-    Representa el servicio de asesoría especializada.
+    Representa un servicio de asesoría especializada.
     """
 
     def __init__(self, codigo, nombre, precio_base, especialidad, horas):
 
         super().__init__(codigo, nombre, precio_base)
 
-        self.__especialidad = ""
-        self.__horas = 0
-
         self.especialidad = especialidad
         self.horas = horas
 
     # ==================================================
-    # GETTERS
+    # PROPIEDADES
     # ==================================================
 
     @property
     def especialidad(self):
-        """Devuelve la especialidad de la asesoría."""
         return self.__especialidad
 
-    @property
-    def horas(self):
-        """Devuelve la cantidad de horas contratadas."""
-        return self.__horas
-
-    # ==================================================
-    # SETTERS
-    # ==================================================
-
     @especialidad.setter
-    def especialidad(self, nueva_especialidad):
-        """
-        Valida que la especialidad no esté vacía.
-        """
+    def especialidad(self, valor):
 
-        if not nueva_especialidad.strip():
+        valor = valor.strip()
+
+        if not valor:
 
             error = ServicioInvalidoError(
                 "La especialidad no puede estar vacía."
@@ -65,25 +52,26 @@ class Asesoria(Servicio):
 
             raise error
 
-        self.__especialidad = nueva_especialidad
+        self.__especialidad = valor
+
+    @property
+    def horas(self):
+        return self.__horas
 
     @horas.setter
-    def horas(self, nuevas_horas):
-        """
-        Valida que la cantidad de horas sea mayor que cero.
-        """
+    def horas(self, valor):
 
-        if nuevas_horas <= 0:
+        if valor <= 0:
 
             error = ServicioInvalidoError(
-                "Las horas de asesoría deben ser mayores que cero."
+                "Las horas deben ser mayores que cero."
             )
 
             Logger.registrar_error(error)
 
             raise error
 
-        self.__horas = nuevas_horas
+        self.__horas = valor
 
     # ==================================================
     # MÉTODOS HEREDADOS
@@ -92,9 +80,6 @@ class Asesoria(Servicio):
     def calcular_costo(self):
         """
         Calcula el costo del servicio.
-
-        Fórmula:
-            precio_base × horas
         """
 
         return self.precio_base * self.horas
@@ -110,20 +95,16 @@ class Asesoria(Servicio):
             f"{self.horas} horas."
         )
 
-    # ==================================================
-    # MÉTODO ADICIONAL
-    # ==================================================
-
     def mostrar_informacion(self):
         """
-        Muestra toda la información del servicio.
+        Muestra la información del servicio.
         """
 
         print("\n========== SERVICIO DE ASESORÍA ==========")
-        print(f"Código: {self.codigo}")
-        print(f"Nombre: {self.nombre}")
-        print(f"Especialidad: {self.especialidad}")
-        print(f"Horas contratadas: {self.horas}")
-        print(f"Precio Base: ${self.precio_base:,.2f}")
-        print(f"Costo Total: ${self.calcular_costo():,.2f}")
+        print(f"Código       : {self.codigo}")
+        print(f"Nombre       : {self.nombre}")
+        print(f"Especialidad : {self.especialidad}")
+        print(f"Horas        : {self.horas}")
+        print(f"Precio Base  : ${self.precio_base:,.2f}")
+        print(f"Costo Total  : ${self.calcular_costo():,.2f}")
         print("==========================================")
