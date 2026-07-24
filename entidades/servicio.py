@@ -5,112 +5,138 @@ Archivo: servicio.py
 Descripción:
 Este archivo contiene la clase abstracta Servicio.
 
-La clase Servicio representa cualquier servicio que ofrece
-la empresa Software FJ.
+La clase Servicio representa cualquier servicio ofrecido
+por la empresa Software FJ.
 
-No puede ser utilizada directamente; únicamente sirve como
-base para crear servicios específicos como:
+Es una clase abstracta, por lo tanto no puede ser
+instanciada directamente.
 
-- Reserva de salas
-- Alquiler de equipos
-- Asesorías especializadas
+De ella heredarán:
+
+- ReservaSala
+- AlquilerEquipo
+- Asesoria
 
 Autor: Grupo de trabajo
 =========================================================
 """
 
-# Importamos las herramientas necesarias para crear una clase abstracta
 from abc import ABC, abstractmethod
+
+# Excepción personalizada
+from excepciones.excepciones import ServicioInvalidoError
+
+# Logger del sistema
+from utilidades.logger import Logger
 
 
 class Servicio(ABC):
     """
-    Clase abstracta que representa un servicio general.
+    Clase abstracta que representa un servicio.
 
-    Todos los servicios del sistema tendrán:
+    Todo servicio posee:
 
-    - Código
-    - Nombre
-    - Precio base
+    - código
+    - nombre
+    - precio base
 
-    Además, cada servicio deberá implementar su propia
-    forma de calcular el costo y mostrar su descripción.
+    Además todas las clases hijas deberán implementar
+    los métodos calcular_costo() y descripcion().
     """
 
     def __init__(self, codigo, nombre, precio_base):
         """
-        Constructor de la clase Servicio.
+        Constructor de la clase.
 
         Parámetros:
-            codigo (str): Código único del servicio.
-            nombre (str): Nombre del servicio.
-            precio_base (float): Precio inicial del servicio.
+            codigo (str)
+            nombre (str)
+            precio_base (float)
         """
 
-        self.__codigo = codigo
-        self.__nombre = nombre
+        self.__codigo = ""
+        self.__nombre = ""
         self.__precio_base = 0
 
-        # Utilizamos el setter para validar el precio
+        self.codigo = codigo
+        self.nombre = nombre
         self.precio_base = precio_base
 
-    # ===================================================
+    # ==================================================
     # GETTERS
-    # ===================================================
+    # ==================================================
 
     @property
     def codigo(self):
-        """Devuelve el código del servicio."""
         return self.__codigo
 
     @property
     def nombre(self):
-        """Devuelve el nombre del servicio."""
         return self.__nombre
 
     @property
     def precio_base(self):
-        """Devuelve el precio base del servicio."""
         return self.__precio_base
 
-    # ===================================================
+    # ==================================================
     # SETTERS
-    # ===================================================
+    # ==================================================
+
+    @codigo.setter
+    def codigo(self, nuevo_codigo):
+
+        if not nuevo_codigo.strip():
+
+            error = ServicioInvalidoError(
+                "El código del servicio no puede estar vacío."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
+
+        self.__codigo = nuevo_codigo
 
     @nombre.setter
     def nombre(self, nuevo_nombre):
-        """
-        Permite modificar el nombre del servicio.
-
-        El nombre no puede estar vacío.
-        """
 
         if not nuevo_nombre.strip():
-            raise ValueError("El nombre del servicio no puede estar vacío.")
+
+            error = ServicioInvalidoError(
+                "El nombre del servicio no puede estar vacío."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__nombre = nuevo_nombre
 
     @precio_base.setter
     def precio_base(self, nuevo_precio):
-        """
-        Valida que el precio base sea mayor que cero.
-        """
 
         if nuevo_precio <= 0:
-            raise ValueError("El precio base debe ser mayor que cero.")
+
+            error = ServicioInvalidoError(
+                "El precio base debe ser mayor que cero."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__precio_base = nuevo_precio
 
-    # ===================================================
+    # ==================================================
     # MÉTODOS ABSTRACTOS
-    # ===================================================
+    # ==================================================
 
     @abstractmethod
     def calcular_costo(self):
         """
-        Cada servicio calculará su costo de manera diferente.
+        Calcula el costo del servicio.
 
-        Este método deberá implementarse en las clases hijas.
+        Cada clase hija implementará este método.
         """
         pass
 
@@ -119,27 +145,34 @@ class Servicio(ABC):
         """
         Devuelve una descripción del servicio.
 
-        Cada servicio tendrá una descripción distinta.
+        Cada clase hija implementará este método.
         """
         pass
 
-    # ===================================================
-    # MÉTODO SOBRECARGADO (mediante parámetro opcional)
-    # ===================================================
+    # ==================================================
+    # MÉTODO CON PARÁMETRO OPCIONAL
+    # ==================================================
 
-    def calcular_costo_total(self, impuesto=0):
+    def calcular_costo_total(self, impuesto=0, descuento=0):
         """
         Calcula el costo total del servicio.
 
         Parámetros:
-            impuesto (float): Porcentaje de impuesto.
-                              Ejemplo: 19 representa el 19%.
+
+        impuesto (float)
+            Porcentaje de impuesto.
+
+        descuento (float)
+            Porcentaje de descuento.
 
         Retorna:
-            float: Valor final del servicio.
+            float
         """
 
         costo = self.calcular_costo()
+
+        if descuento > 0:
+            costo -= costo * (descuento / 100)
 
         if impuesto > 0:
             costo += costo * (impuesto / 100)
