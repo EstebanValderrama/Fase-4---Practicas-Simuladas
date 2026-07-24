@@ -14,15 +14,24 @@ Incluye validaciones para:
 - Correo electrónico
 - Teléfono
 
+Además registra los errores en el archivo de logs
+utilizando excepciones personalizadas.
+
 Autor: Grupo de trabajo
 =========================================================
 """
 
-# Importamos la clase Entidad
+# Importamos la clase padre
 from entidades.entidad import Entidad
 
-# Librería para validar correos electrónicos mediante expresiones regulares
+# Librería para validar correos electrónicos
 import re
+
+# Importamos las excepciones personalizadas
+from excepciones.excepciones import ClienteInvalidoError
+
+# Importamos el Logger
+from utilidades.logger import Logger
 
 
 class Cliente(Entidad):
@@ -52,11 +61,11 @@ class Cliente(Entidad):
         # Llamamos al constructor de la clase padre
         super().__init__(id_entidad, nombre)
 
-        # Inicializamos los atributos privados
+        # Inicializamos atributos privados
         self.__correo = ""
         self.__telefono = ""
 
-        # Utilizamos los setters para validar los datos
+        # Utilizamos los setters para validar
         self.correo = correo
         self.telefono = telefono
 
@@ -82,30 +91,48 @@ class Cliente(Entidad):
     def correo(self, nuevo_correo):
         """
         Valida que el correo tenga un formato correcto.
-
-        Ejemplo válido:
-            usuario@gmail.com
         """
 
         patron = r'^[\w\.-]+@[\w\.-]+\.\w+$'
 
         if not re.match(patron, nuevo_correo):
-            raise ValueError("El correo electrónico no es válido.")
+
+            error = ClienteInvalidoError(
+                "El correo electrónico no es válido."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__correo = nuevo_correo
 
     @telefono.setter
     def telefono(self, nuevo_telefono):
         """
-        Valida que el teléfono contenga únicamente números
-        y tenga entre 7 y 15 dígitos.
+        Valida que el teléfono tenga únicamente números
+        y una longitud entre 7 y 15 dígitos.
         """
 
         if not nuevo_telefono.isdigit():
-            raise ValueError("El teléfono solo debe contener números.")
+
+            error = ClienteInvalidoError(
+                "El teléfono solo debe contener números."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         if len(nuevo_telefono) < 7 or len(nuevo_telefono) > 15:
-            raise ValueError("El teléfono debe tener entre 7 y 15 dígitos.")
+
+            error = ClienteInvalidoError(
+                "El teléfono debe tener entre 7 y 15 dígitos."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__telefono = nuevo_telefono
 
@@ -116,9 +143,6 @@ class Cliente(Entidad):
     def mostrar_informacion(self):
         """
         Muestra toda la información del cliente.
-
-        Este método implementa el método abstracto
-        definido en la clase Entidad.
         """
 
         print("=" * 40)
