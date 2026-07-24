@@ -7,7 +7,7 @@ Clase que representa el servicio de reserva de salas.
 
 Hereda de la clase abstracta Servicio.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
