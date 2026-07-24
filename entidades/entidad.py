@@ -11,14 +11,12 @@ Autor: Grupo de trabajo
 
 from abc import ABC, abstractmethod
 
+from excepciones.excepciones import ErrorSistema
+
 
 class Entidad(ABC):
     """
     Clase abstracta que representa una entidad del sistema.
-
-    Toda entidad posee:
-    - id
-    - nombre
     """
 
     def __init__(self, id_entidad, nombre):
@@ -26,9 +24,9 @@ class Entidad(ABC):
         self.id = id_entidad
         self.nombre = nombre
 
-    # ==========================================
+    # ==================================================
     # PROPIEDADES
-    # ==========================================
+    # ==================================================
 
     @property
     def id(self):
@@ -37,8 +35,15 @@ class Entidad(ABC):
     @id.setter
     def id(self, valor):
 
+        if not isinstance(valor, int):
+
+            raise ErrorSistema(
+                "El ID debe ser un número entero."
+            )
+
         if valor <= 0:
-            raise ValueError(
+
+            raise ErrorSistema(
                 "El ID debe ser mayor que cero."
             )
 
@@ -51,20 +56,29 @@ class Entidad(ABC):
     @nombre.setter
     def nombre(self, valor):
 
-        if not valor.strip():
-            raise ValueError(
+        if not isinstance(valor, str):
+
+            raise ErrorSistema(
+                "El nombre debe ser una cadena."
+            )
+
+        valor = valor.strip()
+
+        if not valor:
+
+            raise ErrorSistema(
                 "El nombre no puede estar vacío."
             )
 
-        self.__nombre = valor.strip()
+        self.__nombre = valor
 
-    # ==========================================
+    # ==================================================
     # MÉTODO ABSTRACTO
-    # ==========================================
+    # ==================================================
 
     @abstractmethod
     def mostrar_informacion(self):
         """
-        Muestra la información de la entidad.
+        Método que deberán implementar las clases hijas.
         """
         pass
