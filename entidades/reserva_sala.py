@@ -3,100 +3,87 @@
 Archivo: reserva_sala.py
 
 Descripción:
-Este archivo contiene la clase ReservaSala.
+Clase que representa el servicio de reserva de salas.
 
-Representa el servicio de alquiler de una sala por un
-determinado número de horas.
-
-Esta clase hereda de la clase abstracta Servicio e
-implementa los métodos obligatorios definidos en ella.
+Hereda de la clase abstracta Servicio.
 
 Autor: Grupo de trabajo
 =========================================================
 """
 
-# Importamos la clase padre
 from entidades.servicio import Servicio
+from excepciones.excepciones import ServicioInvalidoError
+from utilidades.logger import Logger
 
 
 class ReservaSala(Servicio):
     """
-    Representa el servicio de reserva de una sala.
-
-    Atributos:
-        capacidad (int): Número máximo de personas.
-        horas (int): Cantidad de horas reservadas.
+    Clase que representa una reserva de sala.
     """
 
     def __init__(self, codigo, nombre, precio_base, capacidad, horas):
-        """
-        Constructor de la clase.
 
-        Parámetros:
-            codigo (str)
-            nombre (str)
-            precio_base (float)
-            capacidad (int)
-            horas (int)
-        """
-
-        # Llamamos al constructor de la clase padre
         super().__init__(codigo, nombre, precio_base)
 
         self.__capacidad = 0
         self.__horas = 0
 
-        # Usamos setters para validar
         self.capacidad = capacidad
         self.horas = horas
 
-    # ===================================================
+    # ==========================================
     # GETTERS
-    # ===================================================
+    # ==========================================
 
     @property
     def capacidad(self):
-        """Devuelve la capacidad de la sala."""
         return self.__capacidad
 
     @property
     def horas(self):
-        """Devuelve la cantidad de horas reservadas."""
         return self.__horas
 
-    # ===================================================
+    # ==========================================
     # SETTERS
-    # ===================================================
+    # ==========================================
 
     @capacidad.setter
     def capacidad(self, nueva_capacidad):
-        """
-        Valida que la capacidad sea mayor que cero.
-        """
 
         if nueva_capacidad <= 0:
-            raise ValueError("La capacidad debe ser mayor que cero.")
+
+            error = ServicioInvalidoError(
+                "La capacidad de la sala debe ser mayor que cero."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__capacidad = nueva_capacidad
 
     @horas.setter
     def horas(self, nuevas_horas):
-        """
-        Valida que las horas sean mayores que cero.
-        """
 
         if nuevas_horas <= 0:
-            raise ValueError("Las horas deben ser mayores que cero.")
+
+            error = ServicioInvalidoError(
+                "Las horas de reserva deben ser mayores que cero."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__horas = nuevas_horas
 
-    # ===================================================
-    # MÉTODOS ABSTRACTOS IMPLEMENTADOS
-    # ===================================================
+    # ==========================================
+    # MÉTODOS HEREDADOS
+    # ==========================================
 
     def calcular_costo(self):
         """
-        Calcula el costo de la reserva.
+        Calcula el costo total de la reserva.
 
         Fórmula:
             precio_base × horas
@@ -110,27 +97,25 @@ class ReservaSala(Servicio):
         """
 
         return (
-            f"Reserva de sala con capacidad para "
+            f"Reserva de una sala para "
             f"{self.capacidad} personas durante "
             f"{self.horas} horas."
         )
 
-    # ===================================================
-    # MOSTRAR INFORMACIÓN
-    # ===================================================
+    # ==========================================
+    # MÉTODO ADICIONAL
+    # ==========================================
 
     def mostrar_informacion(self):
         """
         Muestra toda la información del servicio.
         """
 
-        print("=" * 50)
-        print("SERVICIO: RESERVA DE SALA")
-        print("=" * 50)
+        print("\n========== RESERVA DE SALA ==========")
         print(f"Código: {self.codigo}")
         print(f"Nombre: {self.nombre}")
-        print(f"Precio por hora: ${self.precio_base:,.2f}")
-        print(f"Capacidad: {self.capacidad} personas")
+        print(f"Capacidad: {self.capacidad}")
         print(f"Horas: {self.horas}")
-        print(f"Costo total: ${self.calcular_costo():,.2f}")
-        print("=" * 50)
+        print(f"Precio Base: ${self.precio_base:,.2f}")
+        print(f"Costo Total: ${self.calcular_costo():,.2f}")
+        print("=====================================")
