@@ -7,7 +7,7 @@ Clase que representa el servicio de alquiler de equipos.
 
 Hereda de la clase abstracta Servicio.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
