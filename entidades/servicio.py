@@ -3,19 +3,10 @@
 Archivo: servicio.py
 
 Descripción:
-Este archivo contiene la clase abstracta Servicio.
+Clase abstracta que representa cualquier servicio
+ofrecido por la empresa.
 
-La clase Servicio representa cualquier servicio ofrecido
-por la empresa Software FJ.
-
-Es una clase abstracta, por lo tanto no puede ser
-instanciada directamente.
-
-De ella heredarán:
-
-- ReservaSala
-- AlquilerEquipo
-- Asesoria
+Todas las clases de servicios heredan de esta clase.
 
 Autor: Grupo de trabajo
 =========================================================
@@ -23,69 +14,35 @@ Autor: Grupo de trabajo
 
 from abc import ABC, abstractmethod
 
-# Excepción personalizada
 from excepciones.excepciones import ServicioInvalidoError
-
-# Logger del sistema
 from utilidades.logger import Logger
 
 
 class Servicio(ABC):
     """
     Clase abstracta que representa un servicio.
-
-    Todo servicio posee:
-
-    - código
-    - nombre
-    - precio base
-
-    Además todas las clases hijas deberán implementar
-    los métodos calcular_costo() y descripcion().
     """
 
     def __init__(self, codigo, nombre, precio_base):
-        """
-        Constructor de la clase.
-
-        Parámetros:
-            codigo (str)
-            nombre (str)
-            precio_base (float)
-        """
-
-        self.__codigo = ""
-        self.__nombre = ""
-        self.__precio_base = 0
 
         self.codigo = codigo
         self.nombre = nombre
         self.precio_base = precio_base
 
     # ==================================================
-    # GETTERS
+    # PROPIEDADES
     # ==================================================
 
     @property
     def codigo(self):
         return self.__codigo
 
-    @property
-    def nombre(self):
-        return self.__nombre
-
-    @property
-    def precio_base(self):
-        return self.__precio_base
-
-    # ==================================================
-    # SETTERS
-    # ==================================================
-
     @codigo.setter
-    def codigo(self, nuevo_codigo):
+    def codigo(self, valor):
 
-        if not nuevo_codigo.strip():
+        valor = valor.strip()
+
+        if not valor:
 
             error = ServicioInvalidoError(
                 "El código del servicio no puede estar vacío."
@@ -95,12 +52,18 @@ class Servicio(ABC):
 
             raise error
 
-        self.__codigo = nuevo_codigo
+        self.__codigo = valor
+
+    @property
+    def nombre(self):
+        return self.__nombre
 
     @nombre.setter
-    def nombre(self, nuevo_nombre):
+    def nombre(self, valor):
 
-        if not nuevo_nombre.strip():
+        valor = valor.strip()
+
+        if not valor:
 
             error = ServicioInvalidoError(
                 "El nombre del servicio no puede estar vacío."
@@ -110,22 +73,26 @@ class Servicio(ABC):
 
             raise error
 
-        self.__nombre = nuevo_nombre
+        self.__nombre = valor
+
+    @property
+    def precio_base(self):
+        return self.__precio_base
 
     @precio_base.setter
-    def precio_base(self, nuevo_precio):
+    def precio_base(self, valor):
 
-        if nuevo_precio <= 0:
+        if valor <= 0:
 
             error = ServicioInvalidoError(
-                "El precio base debe ser mayor que cero."
+                "El precio debe ser mayor que cero."
             )
 
             Logger.registrar_error(error)
 
             raise error
 
-        self.__precio_base = nuevo_precio
+        self.__precio_base = valor
 
     # ==================================================
     # MÉTODOS ABSTRACTOS
@@ -135,8 +102,6 @@ class Servicio(ABC):
     def calcular_costo(self):
         """
         Calcula el costo del servicio.
-
-        Cada clase hija implementará este método.
         """
         pass
 
@@ -144,37 +109,32 @@ class Servicio(ABC):
     def descripcion(self):
         """
         Devuelve una descripción del servicio.
+        """
+        pass
 
-        Cada clase hija implementará este método.
+    @abstractmethod
+    def mostrar_informacion(self):
+        """
+        Muestra la información del servicio.
         """
         pass
 
     # ==================================================
-    # MÉTODO CON PARÁMETRO OPCIONAL
+    # MÉTODO GENERAL
     # ==================================================
 
     def calcular_costo_total(self, impuesto=0, descuento=0):
         """
-        Calcula el costo total del servicio.
-
-        Parámetros:
-
-        impuesto (float)
-            Porcentaje de impuesto.
-
-        descuento (float)
-            Porcentaje de descuento.
-
-        Retorna:
-            float
+        Calcula el costo total aplicando impuestos
+        y descuentos.
         """
 
         costo = self.calcular_costo()
 
         if descuento > 0:
-            costo -= costo * (descuento / 100)
+            costo -= costo * descuento / 100
 
         if impuesto > 0:
-            costo += costo * (impuesto / 100)
+            costo += costo * impuesto / 100
 
         return costo
