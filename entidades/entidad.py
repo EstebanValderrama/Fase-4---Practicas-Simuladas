@@ -5,7 +5,7 @@ Archivo: entidad.py
 Descripción:
 Clase abstracta base para todas las entidades del sistema.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
