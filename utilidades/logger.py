@@ -3,61 +3,51 @@
 Archivo: logger.py
 
 Descripción:
-Este archivo contiene la clase Logger.
-
-Su función es registrar en un archivo de texto todos los
-eventos importantes y los errores que ocurran durante la
-ejecución del programa.
-
-Cada registro almacena:
-
-- Fecha
-- Hora
-- Tipo de evento
-- Descripción
+Clase encargada de registrar eventos y errores
+del sistema en el archivo logs/errores.log
 
 Autor: Grupo de trabajo
 =========================================================
 """
 
-# Librerías necesarias
 from datetime import datetime
+import os
 
 
 class Logger:
-    """
-    Clase encargada de registrar eventos y errores
-    del sistema.
-    """
 
-    # Ruta del archivo donde se guardarán los registros
+    # Ruta del archivo de logs
     ARCHIVO_LOG = "logs/errores.log"
 
     @staticmethod
     def registrar_evento(mensaje):
         """
-        Guarda un evento en el archivo de logs.
-
-        Parámetros:
-            mensaje (str): Descripción del evento.
+        Registra un evento del sistema.
         """
 
-        fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        os.makedirs("logs", exist_ok=True)
 
         with open(Logger.ARCHIVO_LOG, "a", encoding="utf-8") as archivo:
-            archivo.write(f"[EVENTO] {fecha} - {mensaje}\n")
+
+            fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+            archivo.write(
+                f"[EVENTO] {fecha} -> {mensaje}\n"
+            )
 
     @staticmethod
     def registrar_error(error):
         """
-        Guarda un error en el archivo de logs.
-
-        Parámetros:
-            error (Exception): Error ocurrido.
+        Registra un error ocurrido.
         """
 
-        fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        os.makedirs("logs", exist_ok=True)
 
         with open(Logger.ARCHIVO_LOG, "a", encoding="utf-8") as archivo:
-            archivo.write(f"[ERROR] {fecha} - {error}\n")
+
+            fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+            archivo.write(
+                f"[ERROR] {fecha} -> {type(error).__name__}: {error}\n"
+            )
 
