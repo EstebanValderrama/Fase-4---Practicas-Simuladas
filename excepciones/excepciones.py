@@ -3,77 +3,63 @@
 Archivo: excepciones.py
 
 Descripción:
-Este archivo contiene todas las excepciones
-personalizadas del sistema.
-
-Las excepciones permiten identificar de manera clara
-los diferentes errores que pueden ocurrir durante la
-ejecución del programa.
+Contiene todas las excepciones personalizadas utilizadas
+en el Sistema Integral de Gestión de Clientes,
+Servicios y Reservas.
 
 Autor: Grupo de trabajo
 =========================================================
 """
 
 
-class ClienteInvalidoError(Exception):
+class ErrorSistema(Exception):
     """
-    Se genera cuando los datos de un cliente no son válidos.
-
-    Ejemplos:
-    - Correo inválido.
-    - Teléfono incorrecto.
-    - Nombre vacío.
+    Clase base para todas las excepciones del sistema.
     """
 
-    def __init__(self, mensaje):
-        super().__init__(mensaje)
+    pass
 
 
-class ServicioInvalidoError(Exception):
+class ClienteInvalidoError(ErrorSistema):
     """
-    Se genera cuando un servicio contiene información
-    incorrecta.
-
-    Ejemplos:
-    - Precio negativo.
-    - Código vacío.
-    - Nombre vacío.
+    Se produce cuando los datos del cliente
+    son inválidos.
     """
 
-    def __init__(self, mensaje):
-        super().__init__(mensaje)
+    pass
 
 
-class ReservaError(Exception):
+class ServicioInvalidoError(ErrorSistema):
     """
-    Se genera cuando ocurre un problema durante
-    una reserva.
-
-    Ejemplos:
-    - Reserva inexistente.
-    - Reserva cancelada.
-    - Datos incompletos.
+    Se produce cuando los datos de un servicio
+    son inválidos.
     """
 
-    def __init__(self, mensaje):
-        super().__init__(mensaje)
+    pass
 
 
-class ServicioNoDisponibleError(Exception):
+class ReservaError(ErrorSistema):
     """
-    Se genera cuando un servicio solicitado
-    no está disponible.
-    """
-
-    def __init__(self, mensaje):
-        super().__init__(mensaje)
-
-
-class CostoInvalidoError(Exception):
-    """
-    Se genera cuando el cálculo del costo
-    produce un resultado inválido.
+    Se produce cuando ocurre un problema
+    relacionado con una reserva.
     """
 
-    def __init__(self, mensaje):
-        super().__init__(mensaje)
+    pass
+
+
+class ServicioNoDisponibleError(ErrorSistema):
+    """
+    Se produce cuando un servicio
+    no se encuentra disponible.
+    """
+
+    pass
+
+
+class CostoInvalidoError(ErrorSistema):
+    """
+    Se produce cuando el costo calculado
+    es inválido.
+    """
+
+    pass
