@@ -7,7 +7,7 @@ Contiene todas las excepciones personalizadas utilizadas
 en el Sistema Integral de Gestión de Clientes,
 Servicios y Reservas.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
