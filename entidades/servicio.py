@@ -8,7 +8,7 @@ ofrecido por la empresa.
 
 Todas las clases de servicios heredan de esta clase.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
