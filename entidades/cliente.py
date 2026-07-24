@@ -8,7 +8,7 @@ Clase Cliente del sistema.
 Hereda de la clase abstracta Entidad y representa
 a un cliente que puede realizar reservas.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
