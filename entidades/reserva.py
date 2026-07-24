@@ -5,10 +5,9 @@ Archivo: reserva.py
 Descripción:
 Clase que representa una reserva realizada por un cliente.
 
-Relaciona un Cliente con un Servicio y permite
-confirmar, cancelar y procesar reservas.
+Relaciona un Cliente con un Servicio.
 
-Autor: Grupo de trabajo
+Autor: Carlos Esteban Valderrama Monroy
 =========================================================
 """
 
@@ -24,35 +23,28 @@ class Reserva:
     Representa una reserva realizada por un cliente.
     """
 
-    def __init__(self, cliente, servicio, duracion):
+    ESTADOS_VALIDOS = [
+        "Pendiente",
+        "Confirmada",
+        "Cancelada"
+    ]
 
-        # Validar que el objeto recibido sea un Cliente
+    def __init__(self, cliente, servicio):
+
         if not isinstance(cliente, Cliente):
 
             error = ReservaError(
-                "El objeto recibido no corresponde a un Cliente."
+                "Debe proporcionar un cliente válido."
             )
 
             Logger.registrar_error(error)
 
             raise error
 
-        # Validar que el objeto recibido sea un Servicio
         if not isinstance(servicio, Servicio):
 
             error = ReservaError(
-                "El objeto recibido no corresponde a un Servicio."
-            )
-
-            Logger.registrar_error(error)
-
-            raise error
-
-        # Validar la duración
-        if duracion <= 0:
-
-            error = ReservaError(
-                "La duración de la reserva debe ser mayor que cero."
+                "Debe proporcionar un servicio válido."
             )
 
             Logger.registrar_error(error)
@@ -61,11 +53,10 @@ class Reserva:
 
         self.__cliente = cliente
         self.__servicio = servicio
-        self.__duracion = duracion
-        self.__estado = "Pendiente"
+        self.estado = "Pendiente"
 
     # ==================================================
-    # GETTERS
+    # PROPIEDADES
     # ==================================================
 
     @property
@@ -77,12 +68,23 @@ class Reserva:
         return self.__servicio
 
     @property
-    def duracion(self):
-        return self.__duracion
-
-    @property
     def estado(self):
         return self.__estado
+
+    @estado.setter
+    def estado(self, valor):
+
+        if valor not in self.ESTADOS_VALIDOS:
+
+            error = ReservaError(
+                "Estado de reserva no válido."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
+
+        self.__estado = valor
 
     # ==================================================
     # MÉTODOS
@@ -93,10 +95,10 @@ class Reserva:
         Confirma la reserva.
         """
 
-        self.__estado = "Confirmada"
+        self.estado = "Confirmada"
 
         Logger.registrar_evento(
-            f"Reserva confirmada para el cliente {self.cliente.nombre}."
+            f"Reserva confirmada para {self.cliente.nombre}"
         )
 
     def cancelar(self):
@@ -104,44 +106,27 @@ class Reserva:
         Cancela la reserva.
         """
 
-        self.__estado = "Cancelada"
+        self.estado = "Cancelada"
 
         Logger.registrar_evento(
-            f"Reserva cancelada para el cliente {self.cliente.nombre}."
+            f"Reserva cancelada para {self.cliente.nombre}"
         )
 
-    def procesar(self):
+    def costo_total(self):
         """
-        Procesa la reserva.
+        Devuelve el costo total del servicio reservado.
         """
 
-        if self.__estado == "Cancelada":
-
-            error = ReservaError(
-                "No es posible procesar una reserva cancelada."
-            )
-
-            Logger.registrar_error(error)
-
-            raise error
-
-        self.__estado = "Procesada"
-
-        Logger.registrar_evento(
-            f"Reserva procesada para el cliente {self.cliente.nombre}."
-        )
+        return self.servicio.calcular_costo()
 
     def mostrar_informacion(self):
         """
-        Muestra toda la información de la reserva.
+        Muestra la información de la reserva.
         """
 
         print("\n============= RESERVA =============")
         print(f"Cliente : {self.cliente.nombre}")
         print(f"Servicio: {self.servicio.nombre}")
-        print(f"Duración: {self.duracion}")
         print(f"Estado  : {self.estado}")
-        print(
-            f"Costo   : ${self.servicio.calcular_costo():,.2f}"
-        )
+        print(f"Costo   : ${self.costo_total():,.2f}")
         print("===================================")
