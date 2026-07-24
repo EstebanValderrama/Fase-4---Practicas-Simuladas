@@ -3,62 +3,70 @@
 Archivo: reserva.py
 
 Descripción:
-Este archivo contiene la clase Reserva.
+Clase que representa una reserva realizada por un cliente.
 
-La clase Reserva relaciona un cliente con un servicio,
-permitiendo confirmar, cancelar y procesar reservas.
+Relaciona un Cliente con un Servicio y permite
+confirmar, cancelar y procesar reservas.
 
 Autor: Grupo de trabajo
 =========================================================
 """
 
-# Importamos las clases necesarias
 from entidades.cliente import Cliente
 from entidades.servicio import Servicio
+
+from excepciones.excepciones import ReservaError
+from utilidades.logger import Logger
 
 
 class Reserva:
     """
     Representa una reserva realizada por un cliente.
-
-    Una reserva está compuesta por:
-
-    - Cliente
-    - Servicio
-    - Duración
-    - Estado
     """
 
     def __init__(self, cliente, servicio, duracion):
-        """
-        Constructor de la clase.
 
-        Parámetros:
-            cliente (Cliente): Cliente que realiza la reserva.
-            servicio (Servicio): Servicio solicitado.
-            duracion (int): Tiempo de duración.
-        """
-
-        # Verificamos que el objeto recibido sea un Cliente
+        # Validar que el objeto recibido sea un Cliente
         if not isinstance(cliente, Cliente):
-            raise TypeError("El objeto recibido no es un Cliente.")
 
-        # Verificamos que el objeto recibido sea un Servicio
+            error = ReservaError(
+                "El objeto recibido no corresponde a un Cliente."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
+
+        # Validar que el objeto recibido sea un Servicio
         if not isinstance(servicio, Servicio):
-            raise TypeError("El objeto recibido no es un Servicio.")
 
-        # Validamos la duración
+            error = ReservaError(
+                "El objeto recibido no corresponde a un Servicio."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
+
+        # Validar la duración
         if duracion <= 0:
-            raise ValueError("La duración debe ser mayor que cero.")
+
+            error = ReservaError(
+                "La duración de la reserva debe ser mayor que cero."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__cliente = cliente
         self.__servicio = servicio
         self.__duracion = duracion
         self.__estado = "Pendiente"
 
-    # ===================================================
+    # ==================================================
     # GETTERS
-    # ===================================================
+    # ==================================================
 
     @property
     def cliente(self):
@@ -76,53 +84,64 @@ class Reserva:
     def estado(self):
         return self.__estado
 
-    # ===================================================
-    # MÉTODOS DE LA RESERVA
-    # ===================================================
+    # ==================================================
+    # MÉTODOS
+    # ==================================================
 
     def confirmar(self):
         """
-        Cambia el estado de la reserva a Confirmada.
+        Confirma la reserva.
         """
 
         self.__estado = "Confirmada"
 
+        Logger.registrar_evento(
+            f"Reserva confirmada para el cliente {self.cliente.nombre}."
+        )
+
     def cancelar(self):
         """
-        Cambia el estado de la reserva a Cancelada.
+        Cancela la reserva.
         """
 
         self.__estado = "Cancelada"
 
+        Logger.registrar_evento(
+            f"Reserva cancelada para el cliente {self.cliente.nombre}."
+        )
+
     def procesar(self):
         """
         Procesa la reserva.
-
-        Si la reserva fue cancelada, no podrá procesarse.
         """
 
         if self.__estado == "Cancelada":
-            raise Exception(
+
+            error = ReservaError(
                 "No es posible procesar una reserva cancelada."
             )
 
+            Logger.registrar_error(error)
+
+            raise error
+
         self.__estado = "Procesada"
 
-    # ===================================================
-    # MOSTRAR INFORMACIÓN
-    # ===================================================
+        Logger.registrar_evento(
+            f"Reserva procesada para el cliente {self.cliente.nombre}."
+        )
 
     def mostrar_informacion(self):
         """
         Muestra toda la información de la reserva.
         """
 
-        print("=" * 50)
-        print("INFORMACIÓN DE LA RESERVA")
-        print("=" * 50)
-        print(f"Cliente: {self.cliente.nombre}")
+        print("\n============= RESERVA =============")
+        print(f"Cliente : {self.cliente.nombre}")
         print(f"Servicio: {self.servicio.nombre}")
         print(f"Duración: {self.duracion}")
-        print(f"Costo: ${self.servicio.calcular_costo():,.2f}")
-        print(f"Estado: {self.estado}")
-        print("=" * 50)
+        print(f"Estado  : {self.estado}")
+        print(
+            f"Costo   : ${self.servicio.calcular_costo():,.2f}"
+        )
+        print("===================================")
