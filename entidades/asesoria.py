@@ -3,56 +3,37 @@
 Archivo: asesoria.py
 
 Descripción:
-Este archivo contiene la clase Asesoria.
+Clase que representa el servicio de asesoría.
 
-Representa el servicio de asesorías especializadas que
-ofrece Software FJ.
-
-Esta clase hereda de Servicio e implementa los métodos
-abstractos definidos en la clase padre.
+Hereda de la clase abstracta Servicio.
 
 Autor: Grupo de trabajo
 =========================================================
 """
 
-# Importamos la clase padre
 from entidades.servicio import Servicio
+from excepciones.excepciones import ServicioInvalidoError
+from utilidades.logger import Logger
 
 
 class Asesoria(Servicio):
     """
-    Representa un servicio de asesoría especializada.
-
-    Atributos:
-        especialidad (str): Área de la asesoría.
-        horas (int): Cantidad de horas contratadas.
+    Representa el servicio de asesoría especializada.
     """
 
     def __init__(self, codigo, nombre, precio_base, especialidad, horas):
-        """
-        Constructor de la clase.
 
-        Parámetros:
-            codigo (str): Código del servicio.
-            nombre (str): Nombre del servicio.
-            precio_base (float): Precio por hora.
-            especialidad (str): Área de conocimiento.
-            horas (int): Horas contratadas.
-        """
-
-        # Inicializamos los atributos heredados
         super().__init__(codigo, nombre, precio_base)
 
         self.__especialidad = ""
         self.__horas = 0
 
-        # Utilizamos los setters para validar los datos
         self.especialidad = especialidad
         self.horas = horas
 
-    # ===================================================
+    # ==================================================
     # GETTERS
-    # ===================================================
+    # ==================================================
 
     @property
     def especialidad(self):
@@ -64,9 +45,9 @@ class Asesoria(Servicio):
         """Devuelve la cantidad de horas contratadas."""
         return self.__horas
 
-    # ===================================================
+    # ==================================================
     # SETTERS
-    # ===================================================
+    # ==================================================
 
     @especialidad.setter
     def especialidad(self, nueva_especialidad):
@@ -75,28 +56,42 @@ class Asesoria(Servicio):
         """
 
         if not nueva_especialidad.strip():
-            raise ValueError("La especialidad no puede estar vacía.")
+
+            error = ServicioInvalidoError(
+                "La especialidad no puede estar vacía."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__especialidad = nueva_especialidad
 
     @horas.setter
     def horas(self, nuevas_horas):
         """
-        Valida que las horas sean mayores que cero.
+        Valida que la cantidad de horas sea mayor que cero.
         """
 
         if nuevas_horas <= 0:
-            raise ValueError("Las horas deben ser mayores que cero.")
+
+            error = ServicioInvalidoError(
+                "Las horas de asesoría deben ser mayores que cero."
+            )
+
+            Logger.registrar_error(error)
+
+            raise error
 
         self.__horas = nuevas_horas
 
-    # ===================================================
-    # MÉTODOS ABSTRACTOS IMPLEMENTADOS
-    # ===================================================
+    # ==================================================
+    # MÉTODOS HEREDADOS
+    # ==================================================
 
     def calcular_costo(self):
         """
-        Calcula el costo de la asesoría.
+        Calcula el costo del servicio.
 
         Fórmula:
             precio_base × horas
@@ -115,22 +110,20 @@ class Asesoria(Servicio):
             f"{self.horas} horas."
         )
 
-    # ===================================================
-    # MOSTRAR INFORMACIÓN
-    # ===================================================
+    # ==================================================
+    # MÉTODO ADICIONAL
+    # ==================================================
 
     def mostrar_informacion(self):
         """
         Muestra toda la información del servicio.
         """
 
-        print("=" * 50)
-        print("SERVICIO: ASESORÍA ESPECIALIZADA")
-        print("=" * 50)
+        print("\n========== SERVICIO DE ASESORÍA ==========")
         print(f"Código: {self.codigo}")
         print(f"Nombre: {self.nombre}")
         print(f"Especialidad: {self.especialidad}")
-        print(f"Precio por hora: ${self.precio_base:,.2f}")
         print(f"Horas contratadas: {self.horas}")
-        print(f"Costo total: ${self.calcular_costo():,.2f}")
-        print("=" * 50)
+        print(f"Precio Base: ${self.precio_base:,.2f}")
+        print(f"Costo Total: ${self.calcular_costo():,.2f}")
+        print("==========================================")
